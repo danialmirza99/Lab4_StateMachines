@@ -12,12 +12,75 @@
 #include "simAVRHeader.h"
 #endif
 
+enum States { init, waitA0, pressA0, waitA1, pressA1 } LA_State;
+
+voidTickFct(){
+	switch(state){
+		case init:
+		state = waitA0;
+		break;
+
+		case waitA0:
+		if(A0){
+			state = pressA0;
+		}
+		else if (!A0){
+			state = waitA0;
+		}
+		break;
+
+		case PressA0:
+                if(A0){
+                        state = pressA0;
+                }
+                else if (!A0){
+                        state = waitA1;
+                }
+                break;
+
+		case waitA1:
+                if(A1){
+                        state = pressA1;
+                }
+                else if (!A1){
+                        state = waitA1;
+                }
+                break;
+
+		case PressA1:
+                if(A1){
+                        state = pressA1;
+                }
+                else if (!A1){
+                        state = waitA0;
+                }
+                break;
+	}
+
+	switch(state){
+		case waitA0:
+		B = 0;
+		cntA0 = 0;
+		break;
+
+		case pressA0:
+		cntA0++;
+		break;
+
+		case waitA1:
+		break;
+
+		case pressA1:
+		B = cntA0 > 100;
+		break;
+	}
+
+}
+
 int main(void) {
-    /* Insert DDR and PORT initializations */
-
-    /* Insert your solution below */
-    while (1) {
-
-    }
-    return 1;
+	B = 0x00;
+	while (1){
+		TickFct();
+	}
+	return 1;
 }
