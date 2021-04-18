@@ -12,73 +12,74 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { init, waitA0, pressA0, waitA1, pressA1 } LA_State;
+enum States { init, waitA0, pressA0, waitA1, pressA1 } state;
 
-voidTickFct(){
+void TickFct(){
 	switch(state){
 		case init:
 		state = waitA0;
 		break;
 
 		case waitA0:
-		if(A0){
+		if((PINA & 0x01) == 0x01){
 			state = pressA0;
 		}
-		else if (!A0){
+		else if ((PINA & 0x01) != 0x01){
 			state = waitA0;
 		}
 		break;
 
 		case PressA0:
-                if(A0){
+                if((PINA & 0x01) == 0x01){
                         state = pressA0;
                 }
-                else if (!A0){
+                else if ((PINA & 0x01) != 0x01){
                         state = waitA1;
                 }
                 break;
 
 		case waitA1:
-                if(A1){
+                if((PINA & 0x02) == 0x02){
                         state = pressA1;
                 }
-                else if (!A1){
+                else if ((PINA & 0x02) != 0x02){
                         state = waitA1;
                 }
                 break;
 
 		case PressA1:
-                if(A1){
+                if((PINA & 0x02) == 0x02){
                         state = pressA1;
                 }
-                else if (!A1){
+                else if ((PINA & 0x02) != 0x02){
                         state = waitA0;
                 }
                 break;
 	}
 
 	switch(state){
-		case waitA0:
-		B = 0;
+		case WaitA0:
+		PORTB = 0x00;
 		cntA0 = 0;
 		break;
 
-		case pressA0:
+		case PressA0:
 		cntA0++;
 		break;
 
-		case waitA1:
+		case WaitA1:
 		break;
 
-		case pressA1:
-		B = cntA0 > 100;
+		case PressA1:
+		PORTB = cntA0 > 100;
 		break;
 	}
 
 }
 
 int main(void) {
-	B = 0x00;
+	DDRA = 0x00; PORTA = 0xFF;
+	DDRB = 0xFF; PORTB = 0x00;
 	while (1){
 		TickFct();
 	}
