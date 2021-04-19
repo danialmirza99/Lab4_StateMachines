@@ -12,99 +12,65 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { init, wait, inc_wait, inc, dec_wait, dec, reset } state;
+enum States { init, On_0, Wait_0, On_1, Wait_1 } state;
 
 void TickFct(){
 	switch(state){
 		case init:
-		state = wait;
+		state = On_0;
 		break;
 
-		case wait:
+		case On_0:
 		if((PINA & 0x01) == 0x01){
-			state = inc_wait;
+			state = Wait_0;
 		}
-		else if ((PINA & 0x02) == 0x02){
-			state = dec_wait;
-		}
-		else if ((PINA & 0x03) == 0x03){
-			state = reset;
-		}
-		else{
-			state = wait;
+		else if ((PINA & 0x01) != 0x01){
+			state = On_0;
 		}
 		break;
 
-		case inc_wait:
-                state = inc;
+		case Wait_0:
+                state = On_1;
                 break;
 
-		case dec_wait:
-                state = dec;
-                break;
-
-		case inc:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
+		case On_1:
+                if((PINA & 0x01) == 0x01){
+                        state = On_1;
                 }
-                else{
-                	state = wait;
+                else if ((PINA & 0x01) != 0x01){
+                        state = Wait_1;
                 }
                 break;
 
-		case dec:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
-                }
-                else{
-                        state = wait;
-                }
-                break;
-
-		case reset:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
-                }
-		else{
-			state = wait;
-		}
+		case Wait_1:
+                state = On_0;
                 break;
 
 		default:
-		state = init;
+		state = On_0;
+		break;
 	}
 
 	switch(state){
 		case init:
-		PORTC = 0x07;
 		break;
 
-		case wait:
+		case On_0:
+		PORTB = 0x01;
 		break;
 
-		case inc_wait:
+		case Wait_0:
 		break;
 
-		case dec_wait:
+		case On_1:
+		PORTB = 0x02;
 		break;
 
-		case inc:
-		if (PORTC < 0x09){
-			PORTC++;
-		}
+		case Wait_1:
 		break;
 
-		case dec:
-		if(PORTC > 0x00){
-			PORTC--;
-		}
-		break;
-
-		case reset:
-		PORTC = 0x00;
-		
 		default:
-		PORTC = 0x07;
+		PORTB = 0x01;
 		break;
 	}
 
@@ -112,7 +78,7 @@ void TickFct(){
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTB = 0x00;
+	DDRB = 0xFF; PORTB = 0x00;
 	while (1){
 		TickFct();
 	}
