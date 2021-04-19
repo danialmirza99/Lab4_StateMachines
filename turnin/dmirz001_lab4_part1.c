@@ -24,7 +24,7 @@ void TickFct(){
 		if((PINA & 0x01) == 0x01){
 			state = Wait_0;
 		}
-		else if ((PINA & 0x01) != 0x01){
+		else{
 			state = On_0;
 		}
 		break;
@@ -37,7 +37,7 @@ void TickFct(){
                 if((PINA & 0x01) == 0x01){
                         state = On_1;
                 }
-                else if ((PINA & 0x01) != 0x01){
+                else{
                         state = Wait_1;
                 }
                 break;
