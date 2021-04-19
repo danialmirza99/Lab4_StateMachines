@@ -90,13 +90,19 @@ void TickFct(){
 
 		case inc:
 		if (PORTC < 0x09){
-			PORTC++;
+			PORTC= PORTC + 1;
+		}
+		else{
+			PORTC = PORTC;
 		}
 		break;
 
 		case dec:
 		if(PORTC > 0x00){
-			PORTC--;
+			PORTC= PORTC - 1;
+		}
+		else{
+			PORTC = PORTC;
 		}
 		break;
 
@@ -109,6 +115,7 @@ void TickFct(){
 	}
 
 }
+
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF;

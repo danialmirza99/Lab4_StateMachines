@@ -15,32 +15,31 @@
 # that they are not ran in isolation but in the order shown and the state of the device is not reset or 
 # altered in between executions (unless preconditions are used).
 
-tests = [ {'description': 'PINA: 0x00 => PORTB: 0x01',
-    'steps': [{'inputs': [('PINA', 0x00)], 'iterations': 2},],
-    'expected': [('PORTB',0x01)],
-    },
-        {'description': 'PINA: 0x01 => PORTB: 0x02',
+tests = [ {'description': 'PINA: 0x01 => PORTC: 0x08',
     'steps': [{'inputs': [('PINA', 0x01)], 'iterations': 2},],
-    'expected': [('PORTB',0x02)],
+    'expected': [('PORTC',0x08)],
     },
-	{'description': 'PINA: 0x00, 0x00, 0x00 => PORTB: 0x01',
-    'steps': [{'inputs': [('PINA', 0x00)], 'iterations': 2},
-        {'inputs': [('PINA', 0x00)], 'iterations': 100},
-        {'inputs': [('PINA', 0x00)], 'iterations': 2},
-        {'inputs': [('PINA', 0x00)], 'iterations': 2}],
-    'expected': [('PORTB',0x01)],
+        {'description': 'PINA: 0x02 => PORTB: 0x06',
+    'steps': [{'inputs': [('PINA', 0x02)], 'iterations': 2},],
+    'expected': [('PORTC',0x06)],
     },
-	{'description': 'PINA: 0x00, 0x01, 0x01 => PORTB: 0x02',
-    'steps': [{'inputs': [('PINA', 0x00)], 'iterations': 2},
+	{'description': 'PINA: 0x02, 0x02, 0x02, 0x01 => PORTC: 0x01',
+    'steps': [{'inputs': [('PINA', 0x02)], 'iterations': 1},
+        {'inputs': [('PINA', 0x02)], 'iterations': 1},
+        {'inputs': [('PINA', 0x02)], 'iterations': 1},
+        {'inputs': [('PINA', 0x01)], 'iterations': 1}],
+    'expected': [('PORTC',0x04)],
+    },
+	{'description': 'PINA: 0x03, 0x01, 0x01 => PORTB: 0x02',
+    'steps': [{'inputs': [('PINA', 0x03)], 'iterations': 2},
         {'inputs': [('PINA', 0x01)], 'iterations': 100},
         {'inputs': [('PINA', 0x01)], 'iterations': 2},
         {'inputs': [('PINA', 0x01)], 'iterations': 2}],
-    'expected': [('PORTB',0x02)],
+    'expected': [('PORTC',0x03)],
     },
 
-
     ]
-
+watch = ['state']
 
 # Optionally you can add a set of "watch" variables these need to be global or static and may need
 # to be scoped at the function level (for static variables) if there are naming conflicts. The 
