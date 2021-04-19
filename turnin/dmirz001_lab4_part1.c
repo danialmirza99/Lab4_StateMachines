@@ -45,6 +45,10 @@ void TickFct(){
 		case Wait_1:
                 state = On_0;
                 break;
+
+		default:
+		state = On_0;
+		break;
 	}
 
 	switch(state){
@@ -63,6 +67,10 @@ void TickFct(){
 		break;
 
 		case Wait_1:
+		break;
+
+		default:
+		PORTB = 0x01;
 		break;
 	}
 
