@@ -1,7 +1,7 @@
 /*	Author: dmirz001
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab 4  Exercise 1
+ *	Assignment: Lab 4  Exercise 2
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,57 +12,99 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { init, On_0, Wait_0, On_1, Wait_1 } state;
+enum States { init, wait, inc_wait, inc, dec_wait, dec, reset } state;
 
 void TickFct(){
 	switch(state){
 		case init:
-		state = On_0;
+		state = wait;
 		break;
 
-		case On_0:
+		case wait:
 		if((PINA & 0x01) == 0x01){
-			state = Wait_0;
+			state = inc_wait;
 		}
-		else if ((PINA & 0x01) != 0x01){
-			state = On_0;
+		else if ((PINA & 0x02) == 0x02){
+			state = dec_wait;
+		}
+		else if ((PINA & 0x03) == 0x03){
+			state = reset;
+		}
+		else{
+			state = wait;
 		}
 		break;
 
-		case Wait_0:
-                state = On_1;
+		case inc_wait:
+                state = inc;
                 break;
 
-		case On_1:
-                if((PINA & 0x01) == 0x01){
-                        state = On_1;
+		case dec_wait:
+                state = dec;
+                break;
+
+		case inc:
+                if((PINA & 0x03) == 0x03){
+                        state = reset;
                 }
-                else if ((PINA & 0x01) != 0x01){
-                        state = Wait_1;
+                else{
+                	state = wait;
                 }
                 break;
 
-		case Wait_1:
-                state = On_0;
+		case dec:
+                if((PINA & 0x03) == 0x03){
+                        state = reset;
+                }
+                else{
+                        state = wait;
+                }
                 break;
+
+		case reset:
+                if((PINA & 0x03) == 0x03){
+                        state = reset;
+                }
+		else{
+			state = wait;
+		}
+                break;
+
+		default:
+		state = init;
 	}
 
 	switch(state){
 		case init:
+		PORTC = 0x07;
 		break;
 
-		case On_0:
-		PORTB = 0x01;
+		case wait:
 		break;
 
-		case Wait_0:
+		case inc_wait:
 		break;
 
-		case On_1:
-		PORTB = 0x02;
+		case dec_wait:
 		break;
 
-		case Wait_1:
+		case inc:
+		if (PORTC < 0x09){
+			PORTC++;
+		}
+		break;
+
+		case dec:
+		if(PORTC > 0x00){
+			PORTC--;
+		}
+		break;
+
+		case reset:
+		PORTC = 0x00;
+		
+		default:
+		PORTC = 0x07;
 		break;
 	}
 
@@ -70,7 +112,7 @@ void TickFct(){
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRB = 0xFF; PORTB = 0x00;
+	DDRC = 0xFF; PORTB = 0x00;
 	while (1){
 		TickFct();
 	}
