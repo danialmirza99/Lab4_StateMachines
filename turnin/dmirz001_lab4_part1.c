@@ -1,7 +1,7 @@
 /*	Author: dmirz001
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab 4  Exercise 2
+ *	Assignment: Lab 4  Exercise 1
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,7 +12,7 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { init, On_0, Wait_0, On_1, Wait_1 } state;
+enum States { init, On_0, Wait_0, On_1, Wait_1, Wait_Reset } state;
 
 void TickFct(){
 	switch(state){
@@ -43,8 +43,21 @@ void TickFct(){
                 break;
 
 		case Wait_1:
-                state = On_0;
+                if((PINA & 0x01) == 0x01){
+			state = On_Reset;
+		}
+		else{
+			state = Wait_1;
+		}
                 break;
+			
+		case On_Reset:
+		if((PINA & 0x01) == 0x01){
+			state = On_Reset;
+		}
+		else{
+			state = On_0;
+		}
 
 		default:
 		state = On_0;
@@ -60,6 +73,7 @@ void TickFct(){
 		break;
 
 		case Wait_0:
+		PORTB = 0x02;
 		break;
 
 		case On_1:
@@ -67,6 +81,11 @@ void TickFct(){
 		break;
 
 		case Wait_1:
+		PORTB = 0x02;
+		break;
+		
+		case On_Reset:
+		PORTB = 0x01;
 		break;
 
 		default:
