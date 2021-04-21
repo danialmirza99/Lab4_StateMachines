@@ -12,6 +12,8 @@
 #include "simAVRHeader.h"
 #endif
 
+enum States { init, wait, inc_wait, inc, dec_wait, dec, reset } state;
+
 void TickFct(){
 	switch(state){
 		case init:
