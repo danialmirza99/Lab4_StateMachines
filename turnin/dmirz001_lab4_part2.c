@@ -17,8 +17,15 @@ enum States { init, wait, inc_wait, inc, dec_wait, dec, reset } state;
 void TickFct(){
 	switch(state){
 		case init:
-		if(((PINA & 0x01) == 0x01) || ((PINA & 0x02) == 0x02))
-		state = wait;
+		if((PINA & 0x01) == 0x01){
+			state = inc_wait;
+		}
+		else if ((PINA & 0x02) == 0x02){
+			state = dec_wait;
+		}
+		else if ((PINA & 0x03) == 0x03){
+			state = reset;
+		}
 		break;
       
 		case wait:
