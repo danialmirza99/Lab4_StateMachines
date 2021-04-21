@@ -86,12 +86,15 @@ void TickFct(){
 
 
 		case unlock1:
+		PORTC = 0x00;
 		break;
 
 		case unlock1_wait:
+		PORTC = 0x00;
 		break;
 
 		case unlock2:
+		PORTC = 0x00;
 		break;
 
 		case unlock2_wait:
