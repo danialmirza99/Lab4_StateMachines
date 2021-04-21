@@ -85,7 +85,7 @@ void TickFct(){
 
 		case inc_wait:
 		if (PORTC < 0x09){
-			B++;
+			PORTC++;
 		}
 		else{
 			PORTC = 0x09;
