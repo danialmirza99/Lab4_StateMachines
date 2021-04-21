@@ -12,7 +12,7 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { init, On_0, Wait_0, On_1, Wait_1, Wait_Reset } state;
+enum States { init, On_0, Wait_0, On_1, Wait_1, On_Reset } state;
 
 void TickFct(){
 	switch(state){
