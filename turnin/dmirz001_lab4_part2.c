@@ -128,7 +128,7 @@ void TickFct(){
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTB = 0x00;
+	DDRC = 0xFF; PORTC = 0x00;
 	while (1){
 		TickFct();
 	}
