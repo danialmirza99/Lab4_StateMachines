@@ -1,7 +1,7 @@
 /*	Author: dmirz001
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab 4  Exercise 2
+ *	Assignment: Lab 4  Exercise 3
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,105 +12,102 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { init, wait, inc_wait, inc, dec_wait, dec, reset } state;
+enum States { init, unlock1, unlock1_wait, unlock2, unlock2_wait, lock_wait } state;
 
 void TickFct(){
 	switch(state){
 		case init:
-		state = wait;
-		break;
-
-		case wait:
-		if((PINA & 0x01) == 0x01){
-			state = inc_wait;
-		}
-		else if ((PINA & 0x02) == 0x02){
-			state = dec_wait;
-		}
-		else if ((PINA & 0x03) == 0x03){
-			state = reset;
+		if((PINA & 0x04) == 0x04){
+			state = unlock1;
 		}
 		else{
-			state = wait;
+		   state = init;
+		}
+		break;
+      
+		case unlock1:
+		if((PINA & 0x04) == 0x04){
+			state = unlock1;
+		}
+		else if((PINA & 0x04) == 0x00){
+			state = unlock1_wait;
+		}
+		else{
+		   state = init;
 		}
 		break;
 
-		case inc_wait:
-                state = inc;
-                break;
-
-		case dec_wait:
-                state = dec;
-                break;
-
-		case inc:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
-                }
-                else{
-                	state = wait;
-                }
-                break;
-
-		case dec:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
-                }
-                else{
-                        state = wait;
-                }
-                break;
-
-		case reset:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
-                }
-		else{
-			state = wait;
+      case unlock1_wait:
+      if((PINA & 0x02) == 0x02){
+			state = unlock2;
 		}
-                break;
+		else if((PINA & 0x04) == 0x00){
+			state = unlock1_wait;
+		}
+		else{
+		   state = init;
+		}
+      break;
 
+		case unlock2:
+		if((PINA & 0x02) == 0x02){
+			state = unlock2;
+		}
+		else if((PINA & 0x02) == 0x00){
+			state = unlock2_wait;
+		}
+		break;
+
+      case unlock2_wait:
+		if((PINA & 0x80) == 0x80){
+			state = lock_wait;
+		}
+		else if((PINA & 0x02) == 0x00){
+			state = unlock2_wait;
+		}
+      break;
+      
+      case lock_wait:
+      if((PINA & 0x80) == 0x80){
+			state = lock_wait;
+		}
+		else if((PINA & 0x80) == 0x00){
+			state = init;
+		}
+		break;
+			
 		default:
 		state = init;
 	}
 
 	switch(state){
 		case init:
-		PORTC = 0x07;
-		break;
-
-		case wait:
-		break;
-
-		case inc_wait:
-		break;
-
-		case dec_wait:
-		break;
-
-		case inc:
-		if (PORTC < 0x09){
-			PORTC= PORTC + 1;
-		}
-		else{
-			PORTC = PORTC;
-		}
-		break;
-
-		case dec:
-		if(PORTC > 0x00){
-			PORTC= PORTC - 1;
-		}
-		else{
-			PORTC = PORTC;
-		}
-		break;
-
-		case reset:
 		PORTC = 0x00;
+		break;
+
+
+		case unlock1:
+		PORTC = 0x00;
+		break;
+
+		case unlock1_wait:
+		PORTC = 0x00;
+		break;
+
+		case unlock2:
+		PORTC = 0x01;
+		break;
+
+		case unlock2_wait:
+		PORTC = 0x01;
+		break;
+		
+		case lock_wait:
+		PORTC = 0x01;
+		break;
 		
 		default:
-		PORTC = 0x07;
+		PORTC = 0x00;
 		break;
 	}
 
@@ -119,7 +116,7 @@ void TickFct(){
 
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTB = 0x00;
+	DDRC = 0xFF; PORTC = 0x00;
 	while (1){
 		TickFct();
 	}
