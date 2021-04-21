@@ -12,14 +12,13 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { init, wait, inc_wait, inc, dec_wait, dec, reset } state;
-
 void TickFct(){
 	switch(state){
 		case init:
+		if(((PINA & 0x01) == 0x01) || ((PINA & 0x02) == 0x02))
 		state = wait;
 		break;
-
+      
 		case wait:
 		if((PINA & 0x01) == 0x01){
 			state = inc_wait;
@@ -44,28 +43,27 @@ void TickFct(){
                 break;
 
 		case inc:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
+                if((PINA & 0x01) == 0x00){
+                        state = wait;
                 }
-                else{
-                	state = wait;
+                else if((PINA & 0x03) == 0x03){
+                     state = reset;
                 }
                 break;
 
 		case dec:
-                if((PINA & 0x03) == 0x03){
-                        state = reset;
-                }
-                else{
+                if((PINA & 0x02) == 0x00){
                         state = wait;
                 }
-                break;
-
-		case reset:
-                if((PINA & 0x03) == 0x03){
+                else if((PINA & 0x03) == 0x03){
                         state = reset;
                 }
-		else{
+                break;
+      
+
+      
+		case reset:
+		if ((PINA & 0x03) == 0x00){
 			state = wait;
 		}
                 break;
@@ -79,35 +77,37 @@ void TickFct(){
 		PORTC = 0x07;
 		break;
 
+
 		case wait:
 		break;
 
 		case inc_wait:
+		if (PORTC < 0x09){
+			B++;
+		}
+		else{
+			PORTC = 0x09;
+		}
 		break;
 
 		case dec_wait:
+		if (PORTC > 0x00){
+			PORTC--;
+		}
+		else{
+			PORTC = 0x00;
+		}
 		break;
 
 		case inc:
-		if (PORTC < 0x09){
-			PORTC= PORTC + 1;
-		}
-		else{
-			PORTC = PORTC;
-		}
 		break;
 
 		case dec:
-		if(PORTC > 0x00){
-			PORTC= PORTC - 1;
-		}
-		else{
-			PORTC = PORTC;
-		}
 		break;
 
 		case reset:
 		PORTC = 0x00;
+		break;
 		
 		default:
 		PORTC = 0x07;
