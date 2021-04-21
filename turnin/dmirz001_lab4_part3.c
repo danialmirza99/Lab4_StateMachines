@@ -1,7 +1,7 @@
 /*	Author: dmirz001
  *  Partner(s) Name: 
  *	Lab Section:
- *	Assignment: Lab 4  Exercise 2
+ *	Assignment: Lab 4  Exercise 3
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -95,7 +95,7 @@ void TickFct(){
 		break;
 
 		case unlock2:
-		PORTC = 0x00;
+		PORTC = 0x01;
 		break;
 
 		case unlock2_wait:
