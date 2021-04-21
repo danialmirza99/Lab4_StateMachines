@@ -58,6 +58,7 @@ void TickFct(){
 		else{
 			state = On_0;
 		}
+		break;
 
 		default:
 		state = On_0;
