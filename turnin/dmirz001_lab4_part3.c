@@ -74,7 +74,8 @@ void TickFct(){
 		else if((PINA & 0x80) == 0x00){
 			state = init;
 		}
-
+		break;
+			
 		default:
 		state = init;
 	}
