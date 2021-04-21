@@ -56,14 +56,14 @@ void TickFct(){
 		break;
 
 		case On_0:
-		PORTB = 0x02;
+		PORTB = 0x01;
 		break;
 
 		case Wait_0:
 		break;
 
 		case On_1:
-		PORTB = 0x01;
+		PORTB = 0x02;
 		break;
 
 		case Wait_1:
